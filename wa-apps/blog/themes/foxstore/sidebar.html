@@ -1,0 +1,173 @@
+{strip}
+
+{$_is_home = $wa->globals("isShopHome")}
+{$_is_page = $wa->globals("isPage")}
+{$_product_data = $wa->globals("productPageData")}
+{$_tags = $wa->shop->tags()}
+
+{if empty($_is_personal_area)}
+
+    {if !$_is_page && !$_is_home && !$_product_data}
+        {* Show category navigation *}
+        {$_catalogs = []}
+        {if empty($category)}
+            {$_catalogs = $wa->shop->categories(0, 0, false)}
+
+        {elseif !empty($category.subcategories)}
+            {$_catalogs = $category.subcategories}
+
+        {elseif !empty($theme_settings.show_neighboring_categories)}
+            {$_root_catalog = $wa->shop->category($category.parent_id)}
+            {if !empty($_root_catalog.subcategories)}
+                {$_catalogs = $_root_catalog.subcategories}
+            {/if}
+        {/if}
+
+        {if !empty($_catalogs)}
+            {$_limit = 20}
+            {if !empty($theme_settings.menu_limit) && $theme_settings.menu_limit > 0}
+                {$_limit = $theme_settings.menu_limit}
+            {/if}
+
+
+        {/if}
+    {/if}
+
+
+
+    {* PRODUCT PAGE *}
+    {if !empty($_product_data)}
+        {$_count = false}
+        {if !empty($_product_data.reviews_count) && $_product_data.reviews_count > 0}
+            {$_count = $_product_data.reviews_count}
+        {/if}
+
+        {$_is_review_page = false}
+        {if !empty($_product_data.is_review_page)}{$_is_review_page = true}{/if}
+
+        {$_product_pages = [
+            [
+                "name" => "[`Product page`]",
+                "uri" => $wa->shop->productUrl($_product_data.product)
+            ],
+            [
+                "name" => "[`Product reviews`]",
+                "count" => $_count,
+                "uri" => $wa->shop->productUrl($_product_data.product, 'reviews'),
+                "is_selected" => $_is_review_page
+            ]
+        ]}
+
+        {foreach $_product_data.product.pages as $_page}
+            {$is_selected = false}
+            {if !empty($_product_data.page) && $_product_data.page.id == $_page.id}
+                {$is_selected = true}
+            {/if}
+            {$_product_pages[] = [
+                "is_selected" => $is_selected,
+                "name" => $_page.name,
+                "uri" => $wa->shop->productUrl($_product_data.product, 'page', [
+                    'page_url' => $_page.url
+                ])
+            ]}
+        {/foreach}
+
+        <section class="s-sidebar-section">
+            <header class="s-section-header">
+                <h2 class="s-header">{$_product_data.product.name|escape}</h2>
+            </header>
+            <div class="s-section-body">
+                <nav class="s-nav-wrapper">
+                    <ul>
+                        {foreach $_product_pages as $_page}
+                            {$_page_url = $_page.uri}
+                            {if !empty($_page.is_selected)}
+                                {$_page_url = "javascript:void(0);"}
+                            {/if}
+
+                            <li class="{if !empty($_page.is_selected)}is-selected{/if}">
+                                <a href="{$_page_url}">
+                                    {$_page.name|escape}{if !empty($_page.count)}&nbsp;<span class="s-count" itemprop="reviewCount">({$_page.count})</span>{/if}
+                                </a>
+                            </li>
+                        {/foreach}
+                    </ul>
+                </nav>
+            </div>
+        </section>
+    {/if}
+
+
+
+
+    {* Display category filters *}
+    {if !empty($category) && !empty($filters)}
+        {include file="./category.filters.html" inline}
+    {/if}
+
+    {* @event frontend_nav.%plugin_id% *}
+    {foreach $frontend_nav as $_}
+        <div class="s-plugin-wrapper">{$_}</div>
+    {/foreach}
+
+    {if !empty($category.description) && $theme_settings.category_description_place === "sidebar"}
+        <section class="s-sidebar-section">
+            <div class="s-section-header">
+                <h2 class="s-header">{$category.name|escape}</h2>
+            </div>
+            <div class="s-section-body">
+                {$category.description}
+            </div>
+        </section>
+    {/if}
+ {* NEWS *} 
+    {if $wa->blog}
+        {$_blog_id = null}
+        {if !empty($theme_settings.news_blog_id)}
+            {$_blog_id = $theme_settings.news_blog_id}
+        {/if}
+        {$_posts = $wa->blog->posts($_blog_id, 5)}
+        {if !empty($_posts)}
+            <section class="s-sidebar-section">
+                <header class="s-section-header">
+                    <h2 class="s-header">[`News`]</h2>
+                </header>
+                <div class="s-section-body">
+
+                    <ul class="s-news-list">
+                        {foreach $_posts as $_post}
+                            <li class="s-item">
+                                <div class="s-date">
+                                    {$_post.datetime|wa_datetime:"humandate"} <span class="s-time">{$_post.datetime|wa_datetime:"time"}</span>
+                                </div>
+                                <div class="s-title">
+                                    <a href="{$_post.link}" class="s-link">{$_post.title}</a>
+                                </div>
+                            </li>
+                        {/foreach}
+                    </ul>
+                </div>
+                <footer class="s-section-footer gray">
+                    <a href="{$wa->getUrl("blog/frontend")}">
+                        [`All news`] <i class="svg-icon next size-10"></i>
+                    </a>
+                </footer>
+            </section>
+        {/if}
+    {/if}
+
+
+{else}
+
+    {$_is_my_order_page = $wa->globals("isMyOrderPage")}
+    {if !empty($_is_my_order_page)}
+        <div class="s-back-link-wrapper" id="js-back-link-wrapper">
+            <a href="{$wa->getUrl('/frontend/myOrders')}">
+                <i class="svg-icon back size-15"></i>[`Back`]
+            </a>
+        </div>
+    {/if}
+
+{/if}
+
+{/strip}

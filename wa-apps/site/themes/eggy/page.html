@@ -1,0 +1,53 @@
+{strip}
+
+{if !empty($breadcrumbs)}
+<div class="breadcrumbs">
+    <ul>
+    <li>{if $theme_settings.logo_link}<a href="{$theme_settings.logo_link}">{else}<a href="{$wa_app_url}">{/if}[`Home`]</a></li>
+    {foreach $breadcrumbs as $breadcrumb}
+    <li><a href="{$breadcrumb.url}">{$breadcrumb.name|escape}</a></li>
+    {/foreach}
+        {if $page.name}
+        <li>{$page.name}</li>
+        {/if}
+    </ul>
+</div>
+{else}
+{if $wa->currentUrl() != $wa_app_url}
+<div class="breadcrumbs">
+    <ul>
+        <li>{if $theme_settings.logo_link}<a href="{$theme_settings.logo_link}">{else}<a href="{$wa_app_url}">{/if}[`Home`]</a></li>
+        {if $page.name}
+        <li>{$page.name}</li>
+        {/if}
+    </ul>
+</div>
+{/if}
+{/if}
+
+<div class="row">
+    <div class="col-lg-3 col-md-3">
+        {if $pages = $wa->site->pages()}
+        {wa_print_tree tree=$pages class="split-catalog hidden-xs-down" selected=$page.id unfolded=true elem ='<a href=":url" title=":name" class=":hidden">:name</a>'}
+        {/if}
+    </div>
+    <div class="col-lg-9 col-md-9">
+        <h3>{$page.name}</h3>
+        {$subpages = $wa->site->pages($page.id)}
+        {if $subpages}
+        <ul class="list-page-inline">
+            {foreach $subpages as $p}
+            <li><a href="{$p.url}">{$p.name}</a></li>
+            {if !$p@last}
+            <li>|</li>
+            {/if}
+            {/foreach}
+        </ul>
+        {/if}
+        <div class="page-content">
+            {$page.content}
+        </div>
+    </div>
+</div>
+
+{/strip}

@@ -1,0 +1,480 @@
+{strip}
+
+{$_name = ""}
+{if $wa->shop}
+    {$_name = $wa->shop->settings('name')}
+    {$_phone = $wa->shop->settings('phone')}
+{/if}
+
+{$_is_personal_area = $wa->globals("isMyAccount")}
+
+<header class="s-header-wrapper" id="s-header-wrapper">
+    {if $theme_settings.heder_variant === "logo_left"}
+
+    <section class="s-header-section">
+        <div class="s-header-top s-layout">
+            <div class="s-column left">
+
+                {$_logo_url = $wa_app_url}
+                {if $wa->shop}
+                    {$_logo_url = $wa->getUrl("shop/frontend")}
+                {/if}
+
+                {if !empty($theme_settings.logo)}
+                    <a class="s-site-logo" href="{$_logo_url}" title="{$_name}">
+                        <img src="{$wa_theme_url}{$theme_settings.logo}?v{$wa_theme_version}" alt="{$_name}" />
+                    </a>
+                {/if}
+
+                {if !empty($theme_settings.logo_tip)}
+                    <a class="s-site-name" href="{$_logo_url}" title="{$_name}">{$theme_settings.logo_tip}</a>
+                {/if}
+
+            </div>
+            <div class="s-column center">
+
+
+    {if !empty($_phone)}
+                    <div class="s-phone-wrapper">
+                      <i class="icofont-ui-cell-phone size-26"></i>
+                        <span class="s-phone">{$_phone}</span>
+                        {if !empty($theme_settings.tip_the_phone_1)}
+                            <span class="s-tip">{$theme_settings.tip_the_phone_1}</span>
+                        {/if}
+                    </div>
+                {/if}
+
+                {if !empty($theme_settings.additional_phone)}
+                    <div class="s-phone-wrapper">
+                      <i class="icofont-ui-cell-phone size-26"></i>
+                        <span class="s-phone">{$theme_settings.additional_phone}</span>
+                        {if !empty($theme_settings.tip_the_phone_2)}
+                            <span class="s-tip">{$theme_settings.tip_the_phone_2}</span>
+                        {/if}
+                    </div>
+                {/if}
+
+
+
+            </div>
+<div class="s-column right accaunt">
+    <i class="icofont-users-alt-4"></i>
+        {if $wa->user()->isAuth()}
+<span class="{if $my_nav_selected == 'profile'}is-selected{/if}">
+    <a href="{$wa->getUrl('/frontend/myProfile')}">Профиль</a>
+</span> / 
+<span class="{if $my_nav_selected == 'orders'}is-selected{/if}">
+    <a href="{$wa->getUrl('/frontend/myOrders')}"> Заказы</a>
+</span> /
+
+<span class="{if $my_nav_selected == 'orders'}is-selected{/if}">
+    <a href="?logout"> Выйти</a>
+</span>
+{else}
+<a href="{$wa->getUrl('/login')}">Вход</a> / 
+
+
+<a href="{$wa->getUrl('/signup')}"> Регистрация</a>
+{/if}
+    
+    </div>
+        </div>
+
+
+    </section>
+    {/if}
+    {if $theme_settings.heder_variant === "logo_center"}
+    
+    
+    <section class="s-header-section">
+        <div class="s-header-top s-layout">
+            <div class="s-column center">
+
+           {if !empty($_phone)}
+                    <div class="s-phone-wrapper">
+                      <i class="icofont-ui-cell-phone size-26"></i>
+                        <span class="s-phone">{$_phone}</span>
+                        {if !empty($theme_settings.tip_the_phone_1)}
+                            <span class="s-tip">{$theme_settings.tip_the_phone_1}</span>
+                        {/if}
+                    </div>
+                {/if}
+
+               
+
+
+            </div>
+            <div class="s-column center">
+
+     {$_logo_url = $wa_app_url}
+                {if $wa->shop}
+                    {$_logo_url = $wa->getUrl("shop/frontend")}
+                {/if}
+
+                {if !empty($theme_settings.logo)}
+                    <a class="s-site-logo" href="{$_logo_url}" title="{$_name}">
+                        <img src="{$wa_theme_url}{$theme_settings.logo}?v{$wa_theme_version}" alt="{$_name}" />
+                    </a>
+                {/if}
+
+                {if !empty($theme_settings.logo_tip)}
+                    <a class="s-site-name" href="{$_logo_url}" title="{$_name}">{$theme_settings.logo_tip}</a>
+                {/if}
+    
+
+
+            </div>
+            <div class="s-column center accaunt">
+ {if !empty($theme_settings.additional_phone)}
+                    <div class="s-phone-wrapper">
+                      <i class="icofont-ui-cell-phone size-26"></i>
+                        <span class="s-phone">{$theme_settings.additional_phone}</span>
+                        {if !empty($theme_settings.tip_the_phone_2)}
+                            <span class="s-tip">{$theme_settings.tip_the_phone_2}</span>
+                        {/if}
+                    </div>
+                {/if}
+
+            </div>
+        </div>
+
+
+    </section>
+    
+    
+    
+    
+    
+    {/if}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    {if empty($_is_personal_area)}
+        <div class="s-header-bottom">
+            <div class="s-layout fixed">
+                 {if $wa->shop}
+                    {$_categories = $wa->shop->categories(0, null, true)}
+                    {if !empty($_categories)}
+                        {$_is_shop_home = $wa->globals("isShopHome")}
+
+                        <div class="s-column left">
+
+                            {$_catalog_classes = []}
+                            
+                            {if !empty($_is_shop_home) && $theme_settings.slider_wight === "slider_wight_75"}
+                                {$_catalog_classes[] = "is-locked"}
+                            {/if}
+                            {if $theme_settings.catalog_font_width === "big"}
+                                {$_catalog_classes[] = "is-big"}
+                            {/if}
+
+                            <div class="s-catalog-wrapper {$_catalog_classes|join:" "}" id="s-header-catalog">
+                                <button class="s-catalog-button {if !empty($_is_shop_home)}without-hover{/if}">[`Catalog`]</button>
+                                <ul class="s-catalog-list">
+                                    {foreach $_categories as $_category}
+                                        {$_limit = 20}
+                                        {if !empty($theme_settings.menu_limit) && $theme_settings.menu_limit > 0}
+                                            {$_limit = $theme_settings.menu_limit}
+                                        {/if}
+
+                                        {if $_category@iteration > $_limit}{break}{/if}
+
+                                        <li>
+                                            <a href="{$_category.url}">{$_category.name}</a>
+
+                                            {* sublevel 1 *}
+                                            {if !empty($_category.childs)}
+                                                <div class="s-sub-wrapper">
+                                                    <ul class="s-sub-list">
+                                                    {foreach $_category.childs as $_sub1_category}
+                                                        <li class="s-sub-item">
+                                                            <a class="s-sub-header" href="{$_sub1_category.url}">{$_sub1_category.name}</a>
+
+                                                            {* sublevel 2 *}
+                                                            {if !empty($_sub1_category.childs)}
+                                                                <ul>
+                                                                    {foreach $_sub1_category.childs as $_sub2_category}
+                                                                        {$_limit = 5}
+                                                                        {if !empty($theme_settings.sub_menu_limit) && $theme_settings.sub_menu_limit > 0}
+                                                                            {$_limit = $theme_settings.sub_menu_limit}
+                                                                        {/if}
+
+                                                                        {if $_sub2_category@index >= $_limit}
+                                                                            <li>
+                                                                                <a href="{$_sub1_category.url}">...</a>
+                                                                            </li>
+                                                                            {break}
+                                                                        {/if}
+                                                                        <li>
+                                                                            <a href="{$_sub2_category.url}">{$_sub2_category.name}</a>
+                                                                        </li>
+                                                                    {/foreach}
+                                                                </ul>
+                                                            {/if}
+
+                                                        </li>
+                                                    {/foreach}
+                                                    </ul>
+                                                </div>
+                                            {/if}
+                                        </li>
+                                    {/foreach}
+                                </ul>
+                                <script>
+                                    ( function($) {
+                                        new window.waTheme.init.shop.Catalog({
+                                            $wrapper: $("#s-header-catalog"),
+                                            is_locked: {if $_is_shop_home && $theme_settings.slider_wight === "slider_wight_75"}true{else}false{/if}
+                                        });
+                                    })(jQuery);
+                                </script>
+                            </div>
+
+                        </div>
+                    {/if}
+                {/if}
+
+                <div class="s-column">
+                    {$_search_action = false}
+                    {$_placeholder = ""}
+
+                    {if $wa_app === "hub"}
+                        {$_search_action = $wa->getUrl("hub/frontend/search")}
+                        {$_placeholder = "[`Search`]"}
+                    {elseif $wa_app === "helpdesk"}
+                        {$_search_action = $wa->getUrl("helpdesk/frontend/search")}
+                        {$_placeholder = "[`Search`]"}
+                    {elseif $wa_app === "blog"}
+                        {$_search_action = $wa->getUrl("blog/frontend/search")}
+                        {$_placeholder = "[`Search`]"}
+                    {elseif $wa_app === "shop"}
+                        {$_search_action = $wa->getUrl("shop/frontend/search")}
+                        {$_placeholder = "[s`Find products`]"}
+                    {/if}
+
+                    {if $wa->shop}
+                        {$_search_action = $wa->getUrl("shop/frontend/search")}
+                        {$_placeholder = "[s`Find products`]"}
+                    {/if}
+
+                    {if !empty($_search_action)}
+                        {$_query = ""}
+                        {if $wa_app === "shop"}
+                            {$_query = $smarty.get.query|default:''|escape}
+                        {/if}
+
+                        <div class="s-layout">
+                            <div class="s-column">
+
+
+
+         
+        
+
+         
+
+                                    
+            
+
+                                <div class="s-search-wrapper" role="search">
+                                  
+                                    {$_theme_config.search.url = "search/" }
+{$_theme_config.search.query = ""}
+{$_theme_config.search.class = "search__form-shop"}
+   {if !empty($_theme_config.search.url)}
+						<div class="top-bar__search" id="top-bar__search">
+                            <div class="search">
+                             	<form class="search__form{if $theme_settings.searchautocomplete_on} search_form_ajax {$_theme_config.search.class}{/if}" action="{$wa_app_url}{$_theme_config.search.url}" data-images="{$theme_settings.searchautocomplete_show_photos}" data-limit="{$theme_settings.searchautocomplete_max_results|default:1}">
+                                    <input class="search__input s-text-input" type="search" name="query" id="search" autocomplete="off" placeholder="{$_theme_config.search.placeholder}" value="{if !empty($_theme_config.search.query)}{$_theme_config.search.query}{/if}">
+                                    <input class="s-submit-input" type="submit" value="Найти">
+                                </form>
+								{if $theme_settings.searchautocomplete_on}
+								<div class="search_result">
+									<div class="search_resultat autocomplete-suggestion-showall"><a class="s-button js-add-button view-all uni-btn uni-btn--red" href="{$_theme_config.search.url}" data-href="{$_theme_config.search.url}?*">Все результаты поиска<span class="hover-anim"></span></a></div>
+								</div>
+								{/if}
+                            </div>
+                        </div>
+						{/if}
+                                    
+                                    
+                                    
+                                   
+                                    
+                                </div>
+
+                            </div>
+                            
+                            
+                            
+                            
+                                              
+                            
+                        </div>
+                    {/if}
+                </div>
+                
+                
+                          <div class="s-column middle right">
+
+                            
+                            
+                            
+                          
+                        {$_is_active = $wa->globals("isComparePage")}
+
+                        {$_compare_item_classes = []}
+                        {if !empty($_is_active)}
+                            {$_compare_item_classes[] = "is-active"}
+                        {/if}
+<a class="s-link" href="{$wa->getUrl("shop/frontend")}compare/" title="[`Compare`]">
+                        <div class="s-pane-item s-cart-wrapper s-compare-wrapper {$_compare_item_classes|join:" "}" id="js-compare-wrapper">
+<i class="icofont-bars"></i>     <div class="cart_blok">                       [`Compare`] <span class=" js-cart-count s-count js-count">0</span>
+</div>
+                            </a>
+
+                            <script>
+                                ( function($, waTheme) {
+                                    var $compare = $("#js-compare-wrapper");
+
+                                    waTheme.apps["shop"].compare = new window.waTheme.init.shop.Compare({
+                                        $wrapper: $compare,
+                                        onChange: function(compare) {
+                                            var hover_class = "with-hover";
+                                            if (compare.count > 0) {
+                                                $compare.addClass(hover_class);
+                                            } else {
+                                                $compare.removeClass(hover_class);
+                                            }
+                                        }
+                                    });
+
+                                })(jQuery, window.waTheme);
+                            </script>
+                        </div>
+                   
+                            </div>
+                            
+                  <div class="s-column right middle">
+                    {if $wa->shop}
+                        {$_cart_total = $wa->shop->cart->total()}
+                        {$_cart_count = $wa->shop->cart->count()}
+                        {$_price = "[`Empty`]"}
+                        {if !empty($_cart_total)}
+                            {$_price = wa_currency_html($_cart_total, $wa->shop->currency())}
+                        {elseif !empty($_cart_count)}
+                            {$_price = wa_currency_html(0, $wa->shop->currency())}
+                        {/if}
+
+                        <div class="s-pane-item {if !empty($_cart_count)}with-hover{/if}">
+<a class="s-link js-cart-link" href="{$wa->shop->checkout()->cartUrl()}" title="[`Cart`]">
+                            <div class="s-cart-wrapper {if empty($_cart_count)}is-empty{/if}" id="js-cart-wrapper">
+                                <i class="icofont-cart-alt"></i>
+                                <div class="cart_blok">
+                                <span class="s-label">  [`Cart`] </span>
+                                <span class="s-count js-cart-count">{if !empty($_cart_count)}{$_cart_count}{else}0{/if}</span>
+                                <span class="s-price js-cart-price">{$_price}</span>
+</div>
+                                {strip}
+                                {capture assign="_loading_template"}
+                                    <div class="s-loading-section">
+                                        <div class="s-loading-content">
+                                            <i class="icon16 loading"></i>
+                                        </div>
+                                    </div>
+                                {/capture}
+                                {/strip}
+
+                                <script>
+                                    ( function($, waTheme) {
+                                        var $cart = $("#js-cart-wrapper"),
+                                            $item = $cart.closest(".s-pane-item");
+
+                                        var is_loading = false;
+                                        $cart.closest(".s-pane-item").on("click", ".js-cart-link", function() {
+                                            if (!is_loading) {
+                                                is_loading = true;
+                                                $("body").append({$_loading_template|json_encode});
+                                            }
+                                        });
+
+                                        waTheme.apps["shop"].cart = new window.waTheme.init.shop.Cart({
+                                            $wrapper: $cart,
+                                            count: {if !empty($_cart_count)}{$_cart_count|intval}{else}0{/if}
+                                        });
+
+                                        waTheme.apps["shop"].cart.onChange( function(cart) {
+                                            var hover_class = "with-hover";
+                                            if (cart.count > 0) {
+                                                $item.addClass(hover_class);
+                                            } else {
+                                                $item.removeClass(hover_class);
+                                            }
+                                        });
+                                    })(jQuery, window.waTheme);
+                                </script>
+                            </div>
+
+                            </a>
+
+                        </div>
+                    {/if}
+
+                </div>
+                
+                
+                
+                
+                
+                
+            </div>
+        </div>
+    {/if}
+
+    {include file="`$wa_active_theme_path`/header.html" inline}
+</header>
+
+{/strip}

@@ -1,0 +1,25 @@
+{strip}
+
+<div class="s-footer-bottom">
+    <div class="s-layout">
+         <div class="s-column center middle" style=" color: #ddd;font-size: 13px;">
+
+
+            {if !empty($theme_settings.site_copyright)}
+             {$theme_settings.footer_rating_widget}
+             222
+                <span class="s-copyright">{$theme_settings.site_copyright}</span>
+                    <div><a href="https://www.shop-script.ru ">Работает на основе Shop-Script. </a><br>
+    <a href="https://www.brandfox.ru ">При участии web студии </a>Brandfox.ru и <a href="https://www.rekcom.ru "> конструктора сайтов</a> rekcom.ru</div>
+
+            {/if}
+        </div>
+        <div class="s-column right middle">
+            {if !empty($theme_settings.age_limit)}
+                <span class="s-age-wrapper">{$theme_settings.age_limit}</span>
+            {/if}
+        </div>
+    </div>
+</div>
+
+{/strip}

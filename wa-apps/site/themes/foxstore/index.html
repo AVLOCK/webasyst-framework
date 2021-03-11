@@ -1,0 +1,524 @@
+{strip}
+
+{$_is_simplified = $wa->globals("simplified")}
+{$_is_auth_page = $wa->globals("isAuthPage")}
+
+{$_hide_pane = $wa->globals("hidePane")}
+{$_hide_sidebar = $wa->globals("hideSidebar")}
+{$_hide_breadcrumbs = $wa->globals("hideBreadcrumbs")}
+{$_hide_footer = $wa->globals("hideFooter")}
+{$_show_banner = $wa->globals("showBottomBanner")}
+{$_is_personal_area = $wa->globals("isMyAccount")}
+{$_hide_shopinfo = true}
+
+{$_html_classes = []}
+
+{$_html_class = $wa->globals("htmlClass")}
+{if !empty($_html_class)}
+    {$_html_classes[] = $_html_class}
+{/if}
+
+{if $_is_simplified}
+    {$_html_classes[] = "is-simplified"}
+    {$_hide_shopinfo = false}
+    {$_hide_sidebar = true}
+    {$_hide_footer = true}
+    {$_hide_pane = true}
+{/if}
+
+{if $_is_auth_page}
+    {$_html_classes[] = "is-simplified"}
+    {$_html_classes[] = "is-auth-page"}
+    {$_hide_breadcrumbs = true}
+    {$_hide_shopinfo = true}
+    {$_hide_sidebar = true}
+    {$_hide_footer = true}
+    {$_hide_pane = true}
+{/if}
+
+{$_locale_string = substr($wa->locale()|default:"en", 0, 2)}
+
+<!DOCTYPE html>
+<html class="{$_html_classes|join:" "}" lang="{if $wa->locale()}{$wa->locale()}{else}en{/if}">
+<head>
+    <title>{$wa->title()|escape}</title>
+
+    {* META *}
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="keywords" content="{$wa->meta('keywords')|escape}" />
+    <meta name="description" content="{$wa->meta('description')|escape}" />
+    <meta name="viewport" content="width=1000" />
+
+    {* ICO *}
+    <link rel="shortcut icon" href="{$wa_url}favicon.ico" />
+    {include file="./my_style.html" inline}
+
+    {* CSS *}
+    <link href="{$wa_url}wa-content/font/ruble/arial/fontface.css" rel="stylesheet" />
+    <link href="{$wa_theme_url}css/custom.css?v={$wa_theme_version}" rel="stylesheet" />
+    {if $theme_settings.color_scheme}
+                <link rel="stylesheet" href="{$wa_theme_url}css/{$theme_settings.color_scheme}.css"  media="all"/>
+    {/if}
+
+    <link href="{$wa_theme_url}css/icofont.min.css?v={$wa_theme_version}" rel="stylesheet" />
+
+    {$wa->css()}
+
+    {* JS *}
+       <script src="{$wa_static_url}wa-content/js/jquery/jquery-1.11.1.min.js?v={$wa->version(true)}"></script>
+    <script src="{$wa_static_url}wa-content/js/jquery/jquery-migrate-1.2.1.min.js?v={$wa->version(true)}"></script>
+    <script src="{$wa_static_url}wa-content/js/jquery-plugins/jquery.cookie.js?v={$wa->version(true)}"></script>
+    <script src="{$wa_theme_url}js/waTheme.js?v={$wa_theme_version}"></script>
+    <script src="{$wa_theme_url}js/custom.js?v={$wa_theme_version}"></script>
+ <script src="{$wa_active_theme_url}js/searh.js?v={$wa_theme_version}"></script>
+
+
+
+    {$wa->js()}
+
+    {include file="`$wa_active_theme_path`/head.html" inline}
+
+    {$wa->head()}
+
+    <script>
+        window.waTheme.site_url = "{$wa_url}";
+        window.waTheme.app_id = "{$wa_app}";
+        window.waTheme.app_url = "{$wa_app_url}";
+        window.waTheme.locale = "{$_locale_string}";
+        window.waTheme.addFonts([
+            { uri: "https://fonts.googleapis.com/css?family=Fira+Sans:400,400italic,500,600&subset=latin,cyrillic" }
+        ]);
+    </script>
+ 
+</head>
+<body>
+  {if !empty($theme_settings.danger_text_display)}
+<div class="s-main-wrapper" style="background:{$theme_settings.danger_bacground_color};color:{$theme_settings.danger_color};">
+<div class="top_menu"><div class="top_style" style=" text-align: center;">
+{$theme_settings.danger_text}
+
+
+</div></div></div>
+
+{/if}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ {if $wa->get('test')}{wa_tpl_vars}{/if} {*откройте в браузере страницу, использующую этот шаблон, добавив к URL страницы параметр ?test=1. *}
+
+{* MAIN SITE WRAPPER *}
+<div class="s-main-wrapper" id="js-main-wrapper" style="{if !empty($theme_settings.background_color)}background-color: {$theme_settings.background_color}{/if}">
+
+    {if !empty($theme_settings.background_banner_left_image) || !empty($theme_settings.background_banner_right_image)}
+        <div class="s-branding-wrapper">
+            <div class="s-branding-block">
+                {if !empty($theme_settings.background_banner_left_image)}
+                    <div class="s-branding left">
+                        {if !empty($theme_settings.background_banner_left_link)}
+                            <a href="{$theme_settings.background_banner_left_link}">
+                                <img src="{$wa_theme_url}{$theme_settings.background_banner_left_image}" alt="">
+                            </a>
+                        {else}
+                            <img src="{$wa_theme_url}{$theme_settings.background_banner_left_image}" alt="">
+                        {/if}
+                    </div>
+                {/if}
+                {if !empty($theme_settings.background_banner_right_image)}
+                    <div class="s-branding right">
+                        {if !empty($theme_settings.background_banner_right_link)}
+                            <a href="{$theme_settings.background_banner_right_link}">
+                                <img src="{$wa_theme_url}{$theme_settings.background_banner_right_image}" alt="">
+                            </a>
+                        {else}
+                            <img src="{$wa_theme_url}{$theme_settings.background_banner_right_image}" alt="">
+                        {/if}
+                    </div>
+                {/if}
+            </div>
+        </div>
+    {/if}
+
+    {* CONTENT AREA *}
+
+
+
+    <div class="top_menu top_{$theme_settings.color_scheme_top_fotter}">
+<div class="top_style">
+        {wa_print_tree tree=$wa->shop->pages() class="nav navbar-nav" attrs = 'id="page-list"' elem ='<a href=":url">:name</a>'  selected=$page.id|default:0}
+
+        <div class="s-column right">
+
+                <div class="s-shop-info">
+                    {if !empty($theme_settings.store_address)}
+                        <div class="s-shop-address">
+                            <i class="svg-icon map-marker size-16 top"></i>
+                            {$theme_settings.store_address}
+                        </div>
+                    {/if}
+
+                    {strip}
+                    {if $wa->shop}
+                        {if !empty($theme_settings.use_shop_schedule) && method_exists($wa->shop, 'schedule')}
+                            {$_schedule = $wa->shop->schedule()}
+
+                            <div class="s-schedule-wrapper" id="js-header-schedule-wrapper">
+                                <div class="s-visible">
+                                    <div class="s-label-wrapper js-show-schedule" title="{_wd("shop", "Business hours")}">
+                                        <i class="svg-icon clock size-16 top"></i> {_wd("shop", "Business hours")} <i class="s-icon"></i>
+                                    </div>
+                                </div>
+                                <div class="s-hidden bottom right">
+                                    <div class="s-days-wrapper">
+                                        {foreach $_schedule.current_week as $_day}
+                                            <div class="s-day-wrapper">
+                                                <div class="s-date">{$_day.name|escape}</div>
+                                                <div class="s-value">
+                                                    {if !empty($_day.work)}
+                                                        <div class="s-time">{$_day.start_work|escape} — {$_day.end_work|escape}</div>
+                                                    {else}
+                                                        <div class="s-text">{_wd("shop", "day off")}</div>
+                                                    {/if}
+                                                </div>
+                                            </div>
+                                        {/foreach}
+                                    </div>
+                                    <i class="s-close-icon js-close-schedule" title="[`Close`]"></i>
+                                </div>
+                                <script>
+                                    ( function($) {
+                                        new window.waTheme.init.site.ScheduleSection({
+                                            $wrapper: $("#js-header-schedule-wrapper")
+                                        });
+                                    })(jQuery);
+                                </script>
+                            </div>
+                        {elseif !empty($theme_settings.manual_schedule)}
+                            <div class="s-time-wrapper">
+                                    {if $theme_settings.heder_variant === "logo_left"}
+
+                                <i class="svg-icon clock size-16 top"></i>
+                                <span class="s-text">{$theme_settings.manual_schedule|escape}</span>
+                           {/if}
+                            {if $theme_settings.heder_variant === "logo_center"}
+       {if $wa->user()->isAuth()}
+       
+<span class="{if $my_nav_selected == 'profile'}is-selected{/if}">
+    <a href="{$wa->getUrl('/frontend/myProfile')}">Профиль</a>
+</span> /
+<span class="{if $my_nav_selected == 'orders'}is-selected{/if}">
+    <a href="{$wa->getUrl('/frontend/myOrders')}"> Заказы</a>
+</span> /
+
+<span class="{if $my_nav_selected == 'orders'}is-selected{/if}">
+    <a href="?logout"> Выйти</a>
+</span>
+{else}
+<a href="{$wa->getUrl('/login')}">Вход</a> /
+
+
+<a href="{$wa->getUrl('/signup')}"> Регистрация</a>
+{/if}
+                            {/if}
+                            </div>
+                        {/if}
+                    {/if}
+                    {/strip}
+                </div>
+
+            </div>
+        </div>
+</div>
+
+
+
+
+
+
+
+
+    <div class="s-main-block" id="js-main-block">
+  {* HEADER *}
+        {include file="./header.layout.html" inline}
+
+
+
+
+
+        {* BREADCRUMBS *}
+        {if empty($_hide_breadcrumbs) && $wa->currentUrl() != $wa_app_url}
+            {include file="./breadcrumbs.layout.html" inline}
+        {/if}
+
+{if $theme_settings.slider_wight === "slider_wight_100" &&  $wa->currentUrl() == $wa_app_url}
+ <div class="s-breadcrumbs-wrapper" id="js-content-block">
+                     <div class="s-content-block" id="js-content-block">
+                    {include file="`$wa_active_theme_path`/slider.html" inline}
+</div></div>
+{/if}
+
+
+
+
+
+        {* GLOBAL HEADER *}
+        {$_global_header = $wa->globals("globalHeader")}
+        {$_global_header_html = $wa->globals("globalHeaderHTML")}
+        {if !empty($_global_header)}
+            <h1 class="s-global-header">{$_global_header}</h1>
+        {elseif $_global_header_html}
+            <div class="s-global-header">{$_global_header_html}</div>
+        {/if}
+
+        <div class="s-layout">
+            {* LEFT SIDEBAR *}
+           {if $wa->globals("isShopHome") &&  $theme_settings.display_index_left_blok === "display_index_left_blok_no"}
+           <style>
+           @media (min-width: 1056px) and (max-width: 1248px) {
+  .s-products-wrapper .s-products-list.thumbs-view .s-product-wrapper,
+  .s-products-wrapper .s-products-list.is-short .s-product-wrapper {
+    width: 20%!important;
+  }
+  .s-products-list .s-product-wrapper:nth-child(5n) {
+    border-right: none;
+    border-left: 0;
+}
+
+
+
+}
+@media (min-width: 1248px) {
+  .s-products-wrapper .s-products-list.thumbs-view .s-product-wrapper,
+  .s-products-wrapper .s-products-list.is-short .s-product-wrapper {
+    width: 20%!important;
+    margin-bottom: 40px;
+  }
+  .s-products-list .s-product-wrapper:nth-child(5n) {
+    border-right: none;
+    border-left: 0;
+}
+
+
+
+}
+</style>
+          {else}
+            {if empty($_hide_sidebar)}
+                <aside class="s-sidebar-wrapper s-column" role="complementary">
+                    <div class="s-sidebar-block" id="js-sidebar-block">
+                        {include file="./sidebar.layout.html" inline}
+                        <script>
+                            ( function($, waTheme) {
+                                var $sidebar = $("#js-sidebar-block");
+
+                                waTheme.layout.$sidebar = $sidebar;
+
+                                {if !empty($_is_personal_area)}
+                                    $(document).ready( function() {
+                                        new waTheme.init.site.FixedBlock({
+                                            $wrapper: $sidebar.closest(".s-sidebar-wrapper"),
+                                            $section: $sidebar,
+                                            type: "top",
+                                            lift: 16
+                                        });
+                                    });
+                                {/if}
+                            })(jQuery, window.waTheme);
+                        </script>
+                    </div>
+                </aside>
+            {/if}
+ {/if}
+
+
+
+            {* CONTENT *}
+            <main class="s-content-wrapper s-column" itemscope itemtype="http://schema.org/WebPage" role="main">
+                <div class="s-content-block" id="js-content-block">
+                    {include file="`$wa_active_theme_path`/main.html" inline}
+
+                    {if empty($_hide_shopinfo)}
+                        <div class="s-shop-info">
+                            {if !empty($theme_settings.store_address)}
+                                <div class="s-shop-address">
+                                    <i class="svg-icon map-marker size-16 top"></i>
+                                    <span>{$theme_settings.store_address}</span>
+                                </div>
+                            {/if}
+
+                            {if $wa->shop}
+                                {if !empty($theme_settings.use_shop_schedule) && method_exists($wa->shop, 'schedule')}
+                                    {$_schedule = $wa->shop->schedule()}
+
+                                    <div class="s-schedule-wrapper" id="js-checkout-schedule-wrapper">
+                                        <div class="s-visible">
+                                            <div class="s-label-wrapper js-show-schedule" title="{_wd("shop", "Business hours")}">
+                                                <i class="svg-icon clock size-16 top"></i> {_wd("shop", "Business hours")} <i class="s-icon"></i>
+                                            </div>
+                                        </div>
+                                        <div class="s-hidden top left">
+                                            <div class="s-days-wrapper">
+                                                {foreach $_schedule.current_week as $_day}
+                                                    <div class="s-day-wrapper">
+                                                        <div class="s-date">{$_day.name|escape}</div>
+                                                        <div class="s-value">
+                                                            {if !empty($_day.work)}
+                                                                <div class="s-time">{$_day.start_work|escape} — {$_day.end_work|escape}</div>
+                                                            {else}
+                                                                <div class="s-text">{_wd("shop", "day off")}</div>
+                                                            {/if}
+                                                        </div>
+                                                    </div>
+                                                {/foreach}
+                                            </div>
+                                            <i class="s-close-icon js-close-schedule" title="[`Close`]"></i>
+                                        </div>
+                                        <script>
+                                            ( function($) {
+                                                new window.waTheme.init.site.ScheduleSection({
+                                                    $wrapper: $("#js-checkout-schedule-wrapper")
+                                                });
+                                            })(jQuery);
+                                        </script>
+                                    </div>
+
+                                {elseif !empty($theme_settings.manual_schedule)}
+                                    <div class="s-time-wrapper">
+                                        <i class="svg-icon clock size-16 top"></i>
+                                        <span class="s-text">{$theme_settings.manual_schedule|escape}</span>
+                                    </div>
+                                {/if}
+                            {/if}
+                        </div>
+                    {/if}
+                </div>
+            </main>
+        </div>
+
+<div id="wrapper_modal">
+  <div class="cover"></div>
+  <div class="modal">
+ <div id="wrapper_modal" style="    text-align: right;"> <i class="icofont-close-line" style="    font-size: 30px;    z-index: 99999;    color: #fff;    background: #000;"></i></div>
+    <div class="content_modal">
+              
+
+     
+     
+    </div>
+  </div>
+</div>
+
+{if $theme_settings.index_text != "" && $wa->currentUrl() == $wa_app_url}
+<section class="o_kompanii s-products-wrapper">
+<div class="s-section-header">О компании</div>
+{$theme_settings.index_text}
+</section>
+{/if}
+
+{if $wa_app == 'shop'}
+
+      {if $wa->currentUrl() == "/"}
+<section class="otzivi">
+
+	{include file="`$wa_active_theme_path`/old_reviews.html" inline}{* last reviews *}
+
+</section>
+
+
+{/if}
+  {/if}
+            {$_image_uri = "`$wa_theme_url``$theme_settings.bottom_banner_image`?v`$wa_theme_version`"}
+            {if !empty($theme_settings.bottom_banner_href)}
+                <a class="s-bottom-banner" href="{$theme_settings.bottom_banner_href}">
+                    <img src="{$_image_uri}" alt="">
+                </a>
+            {else}
+                <span class="s-bottom-banner">
+                    <img src="{$_image_uri}" alt="">
+                </span>
+            {/if}
+
+ </div>
+
+ 
+
+
+        {*FOOTER*}
+        {if empty($_hide_footer)}
+            {include file="./footer.layout.html" inline}
+        {/if}
+
+
+
+  
+</div>
+
+ 
+   <script>
+    
+// open modal
+var wrap = $('#wrapper_modal'),
+  	btn = $('.open-modal-btn'),
+  	modal = $('.cover, .modal, .content_modal');
+  	
+  function linc(url){
+     $(".content_modal").html('');
+
+ 
+ console.log(url)
+  $.ajax({
+  url:url,
+  success: function(html){
+  html = $(html).find(".s-product-page")
+  $(".content_modal").append(html);
+  },
+});
+ modal.fadeIn();
+}
+
+// close modal
+$('.modal').click(function() {
+  wrap.on('click', function(event) {
+    var select = $('.content_modal');
+    if ($(event.target).closest(select).length)
+      return;
+    modal.fadeOut();
+    wrap.unbind('click');
+  });
+});
+</script>
+ 
+  {if class_exists('shopClicklitePlugin')}
+{if $wa->shop}{shopClicklitePlugin::displayModalForm()}{/if}
+
+{/if}
+{if $wa->customizer}{$wa->customizer->customizer()}{/if}
+
+ {$theme_settings.footer_rating_widget}
+
+</body>
+</html>
+
+{/strip}

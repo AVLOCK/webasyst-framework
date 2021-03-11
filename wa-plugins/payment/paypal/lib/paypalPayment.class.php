@@ -119,6 +119,8 @@ class paypalPayment extends waPayment implements waIPayment
             throw new waException('Unsupported currency');
         }
 
+        $total = $order->tax_included == false && $order->tax ? $order->tax + $order->total : $order->total;
+
         // adding all necessary form fields as required by PayPal
         $hidden_fields = array(
             'cmd'           => '_xclick',
@@ -127,7 +129,7 @@ class paypalPayment extends waPayment implements waIPayment
             // packing order number with other auxiliary information for unique identification of current payment method
             'item_number'   => $this->app_id.'_'.$this->merchant_id.'_'.$order->id,
             'no_shipping'   => 1,
-            'amount'        => number_format($order->total, 2, '.', ''),
+            'amount'        => number_format($total, 2, '.', ''),
             'currency_code' => $order->currency,
             // adding service URLs:
 

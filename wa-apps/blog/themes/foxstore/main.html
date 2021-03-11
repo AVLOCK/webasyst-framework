@@ -1,0 +1,40 @@
+{* @event (frontend_action_default|frontend_action_post|frontend_action_page|frontend_action_error).%plugin_id%.nav_before *}
+{foreach $frontend_action as $plugin => $output}
+	{if !empty($output.nav_before)}{$output.nav_before}{/if}
+{/foreach}
+
+
+
+<div class="content with-sidebar" itemscope itemtype="http://schema.org/WebPage">
+
+    {if empty($posts) && $wa->currentUrl() == $wa_app_url}
+
+       <div class="welcome">
+            <h1>[`Welcome to your new blog!`]</h1>
+            <p>{sprintf('[`Start by <a href="%s">writing a post</a> in your blog backend.`]', $wa_backend_url|cat:'blog/')}</p>
+        </div>
+    
+    {else}
+
+        <!-- internal navigation breadcrumbs -->
+        {if isset($breadcrumbs)}
+            <div class="breadcrumbs" itemprop="breadcrumb">
+                {if $wa->globals('isMyAccount')}
+                    {* within My Account we exclude first node from navigation because links are on the page already *}
+                    {$breadcrumbs[0] = null}
+                {/if}
+                {foreach $breadcrumbs as $breadcrumb}
+                    {if $breadcrumb}
+                        <a href="{$breadcrumb.url}">{$breadcrumb.name|escape}</a> <span class="rarr">&rarr;</span>
+                    {/if}
+                {/foreach}
+            </div>
+        {/if}
+        
+        {$content}
+        
+    {/if}
+    
+    <div class="clear-both"></div>
+        
+</div>
