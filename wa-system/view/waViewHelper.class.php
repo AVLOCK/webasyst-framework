@@ -45,18 +45,9 @@ class waViewHelper
         return $cheat_sheet_button->buttonAction($options);
     }
 
-    /**
-     * Show webasyst header
-     * @param array $options
-     *      array  $options['custom']               some custom data for injecting into webasyst header
-     *      string $options['custom']['content']    html content that will be shown in header
-     *      string $options['custom']['user']       html content that will be shown inside user aread
-     *
-     * @return string
-     */
-    public function header(array $options = [])
+    public function header()
     {
-        return wa_header($options);
+        return wa_header();
     }
 
     public function app()

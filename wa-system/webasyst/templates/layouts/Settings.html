@@ -49,7 +49,7 @@
         <div id="wa">
             {$wa->header()}
             <div id="wa-app">
-                <div class="flexbox wrap-mobile">
+                <div class="flexbox">
                     {* SIDEBAR *}
                     <nav class="sidebar hide-scrollbar mobile-friendly" id="wa-app-navigation">
                         <nav class="sidebar-mobile-toggle">
@@ -61,8 +61,10 @@
                     </nav>
                     {* CONTENT *}
                     <div class="content hide-scrollbar blank">
-                        <div id="s-content-block">
-                            {$content}
+                        <div class="article">
+                            <div class="article-body" id="s-content-block">
+                                {$content}
+                            </div>
                         </div>
                     </div>
                 </div>

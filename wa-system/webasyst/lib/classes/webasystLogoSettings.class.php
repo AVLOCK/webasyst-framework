@@ -4,19 +4,6 @@ class webasystLogoSettings
 {
     protected static $runtime_cache = [];
 
-    protected $options;
-
-    /**
-     * webasystLogoSettings constructor.
-     * @param array $options
-     *      bool $options['absolute_urls'] [optional]. Default is false
-     */
-    public function __construct(array $options = [])
-    {
-        $options['absolute_urls'] = isset($options['absolute_urls']) ? boolval($options['absolute_urls']) : false;
-        $this->options = $options;
-    }
-
     /**
      * Get current logo settings
      * @return array $logo
@@ -32,9 +19,8 @@ class webasystLogoSettings
      *      - string $logo['gradient']['to'] - hex code of color (without #)
      *      - int    $logo['gradient']['angle']
      *
-     *      - array $logo['image']['thumbs']
-     *      - array $logo['image']['original']
-     * @throws waException
+     *      - string $logo['image']['url']
+     *      - string $logo['image']['size']
      */
     public function get()
     {
@@ -76,13 +62,13 @@ class webasystLogoSettings
         ];
 
         foreach ($logo['image']['thumbs'] as &$thumb) {
-            $thumb_url = wa()->getDataUrl($thumb['path'], true, 'webasyst', $this->options['absolute_urls']);
+            $thumb_url = wa()->getDataUrl($thumb['path'], true, 'webasyst', false);
             $thumb['url'] = $thumb_url . '?ts=' . $thumb['ts'];
         }
         unset($thumb);
 
         if ($logo['image']['original']) {
-            $logo['image']['original']['url'] = wa()->getDataUrl($logo['image']['original']['path'], true, 'webasyst', $this->options['absolute_urls']);
+            $logo['image']['original']['url'] = wa()->getDataUrl($logo['image']['original']['path'], true, 'webasyst', false);
             $logo['image']['original']['url'] .= '?ts=' . $logo['image']['original']['ts'];
         }
 
@@ -405,12 +391,6 @@ class webasystLogoSettings
             return true;
         }
         return false;
-    }
-
-    public static function isLogoFileName($filepath)
-    {
-        $info = pathinfo($filepath);
-        return isset($info['basename']) && substr($info['basename'], 0, 5) === 'logo.';
     }
 
     /**

@@ -76,7 +76,7 @@ class WASettingsSMS {
             });
         });
 
-        that.$form.on('input change', function () {
+        that.$form.on('input', function () {
             that.$footer_actions.addClass('is-changed');
             that.$button.addClass('yellow').next().show();
         });
@@ -185,27 +185,7 @@ class WASettingsSMSTemplate {
             // Set options
             that.ace[template_id].commands.removeCommand('find');
             ace.config.set("basePath", window.wa_url + 'wa-content/js/ace/');
-
-            let $them_mode = document.querySelector('#wa-dark-mode').getAttribute('media');
-            if ($them_mode === '(prefers-color-scheme: dark)') {
-                that.ace[template_id].setTheme("ace/theme/eclipse");
-            }else{
-                that.ace[template_id].setTheme("ace/theme/monokai");
-            }
-            document.addEventListener('wa_theme_mode_dark', function() {
-                that.ace[template_id].setTheme("ace/theme/monokai");
-            })
-            document.addEventListener('wa_theme_mode_light', function() {
-                that.ace[template_id].setTheme("ace/theme/eclipse");
-            })
-            document.addEventListener('wa_theme_mode_auto', function() {
-                if ($them_mode === '(prefers-color-scheme: dark)') {
-                    that.ace[template_id].setTheme("ace/theme/eclipse");
-                }else{
-                    that.ace[template_id].setTheme("ace/theme/monokai");
-                }
-            })
-
+            that.ace[template_id].setTheme("ace/theme/eclipse");
             that.ace[template_id].renderer.setShowGutter(false);
             sessions[template_id] = that.ace[template_id].getSession();
             sessions[template_id].setMode("ace/mode/smarty");
@@ -240,12 +220,16 @@ class WASettingsSMSTemplate {
             return ($(window).width() - (that.$wrapper.offset().left + that.$wrapper.outerWidth()));
         };
 
-        $(document).on('wa_cheatsheet_init.' + cheat_sheet_name, function () {
+        $(document).bind('wa_cheatsheet_init.' + cheat_sheet_name, function () {
             $.cheatsheet[cheat_sheet_name].insertVarEvent = function () {
-                $("#wa-editor-help-" + cheat_sheet_name).on('click', ".js-var", function () {
+                $("#wa-editor-help-" + cheat_sheet_name).on('click', "div.fields a.inline-link", function () {
+                    let el = $(this).find('i');
+                    if (el.children('b').length) {
+                        el = el.children('b');
+                    }
                     if (that.ace[that.selected_template]) {
-                        that.ace[that.selected_template].insert($(this).text());
-                        that.$button.addClass('yellow');
+                        that.ace[that.selected_template].insert(el.text());
+                        that.$button.removeClass('green').addClass('yellow');
                     }
                     $("#wa-editor-help-" + cheat_sheet_name).hide();
                     return false;
@@ -341,86 +325,85 @@ class WASettingsSMSTemplate {
     initCheck() {
         let that = this,
             $dialog_wrapper = that.$sms_check_dialog,
+            $form = $dialog_wrapper.find('form'),
+            $dialog_buttons = $dialog_wrapper.find('.dialog-buttons'),
+            $button = $dialog_buttons.find('.js-submit-button'),
+            $loading = $dialog_buttons.find('.s-loading'),
             is_locked = false;
 
         that.$wrapper.on('click', '.js-check-button', function () {
             if (that.$button.hasClass('yellow')) {
-                $.waDialog({
-                    $wrapper: that.$requirement_to_save,
+                that.$requirement_to_save.waDialog({
+                    width: '400px',
+                    height: '110px'
                 });
             } else {
-                $.waDialog({
-                    $wrapper: $dialog_wrapper,
-                    onOpen: function ($dialog, dialog) {
-                        const $form = $dialog.find('form'),
-                            $dialog_buttons = $form.find('.dialog-footer'),
-                            $button = $dialog_buttons.find('.js-submit-button'),
-                            $loading = $dialog_buttons.find('.loading');
-
-// Update templates counter
-                        $form.on('change', '.js-template-item-checkbox', function () {
-                            let $checked_templates = $form.find('.js-template-item-checkbox:checked'),
-                                checked_templates_count = $checked_templates.length;
-
-                            $button.val(that.locales.send_nan_sms.replace('%s', checked_templates_count));
-                            if (!checked_templates_count) {
-                                $button.prop('disabled', true);
-                            } else {
-                                $button.prop('disabled', false);
-                            }
-                        });
-
-                        $form.on('submit', function (e) {
-                            e.preventDefault();
-                            if (is_locked) {
-                                return;
-                            }
-                            is_locked = true;
-                            $button.prop('disabled', true);
-                            $loading.show();
-                            $form.find('.js-field-error').remove();
-
-                            let href = $form.attr('action'),
-                                data = $form.serialize();
-
-                            $.post(href, data, function (res) {
-                                if (res.status === 'ok') {
-                                    $button.removeClass('yellow');
-                                    $loading.removeClass('loading').addClass('yes');
-                                    setTimeout(function () {
-                                        $loading.hide();
-                                        dialog.close();
-                                    }, 2000);
-                                } else {
-                                    if (res.errors) {
-                                        $.each(res.errors, function (i, error) {
-                                            let field = error.field,
-                                                message = error.message,
-                                                $input;
-
-                                            if (field == 'template') {
-                                                $input = $dialog_wrapper.find('.js-templates-list');
-                                            } else {
-                                                $input = $form.find('input[name="data' + field + '"]').parent();
-                                            }
-
-                                            $input.addClass('shake animated');
-                                            $input.append('<p class="s-field-error js-field-error custom-m-0 hint">' + message + '</p>');
-                                            setTimeout(function () {
-                                                $input.removeClass('shake animated');
-                                                //$form.find('.js-field-error').remove();
-                                            }, 2000);
-                                        })
-                                    }
-                                    $loading.hide();
-                                    is_locked = false;
-                                    $button.prop('disabled', false);
-                                }
-                            });
-                        });
-                    }
+                $dialog_wrapper.waDialog({
+                    width: '400px',
+                    height: '266px'
                 });
             }
+        });
+
+        // Update templates counter
+        $form.on('change', '.js-template-item-checkbox', function () {
+            let $checked_templates = $form.find('.js-template-item-checkbox:checked'),
+                checked_templates_count = $checked_templates.length;
+
+            $button.val(that.locales.send_nan_sms.replace('%s', checked_templates_count));
+            if (!checked_templates_count) {
+                $button.prop('disabled', true);
+            } else {
+                $button.prop('disabled', false);
+            }
+        });
+
+        $form.on('submit', function (e) {
+            e.preventDefault();
+            if (is_locked) {
+                return;
+            }
+            is_locked = true;
+            $button.prop('disabled', true);
+            $loading.removeClass('yes').addClass('loading').show();
+            $form.find('.js-field-error').remove();
+
+            let href = $form.attr('action'),
+                data = $form.serialize();
+
+            $.post(href, data, function (res) {
+                if (res.status === 'ok') {
+                    $button.removeClass('yellow').addClass('green');
+                    $loading.removeClass('loading').addClass('yes');
+                    setTimeout(function () {
+                        $loading.hide();
+                        $dialog_buttons.find('.cancel').click();
+                    }, 2000);
+                } else {
+                    if (res.errors) {
+                        $.each(res.errors, function (i, error) {
+                            let field = error.field,
+                                message = error.message,
+                                $input;
+
+                            if (field == 'template') {
+                                $input = $dialog_wrapper.find('.js-templates-list');
+                            } else {
+                                $input = $form.find('input[name="data' + field + '"]').parent();
+                            }
+                            $input.addClass('shake animated');
+                            $input.after('<div class="s-field-error js-field-error">' + message + '</div>');
+                            setTimeout(function () {
+                                $input.removeClass('shake animated');
+                                //$form.find('.js-field-error').remove();
+                            }, 2000);
+                        })
+                    }
+                    $loading.hide();
+                }
+                is_locked = false;
+                $button.prop('disabled', false);
+            });
         });
     }
 
@@ -479,7 +462,7 @@ class WASettingsSMSTemplate {
 
             $.post(href, data, function (res) {
                 if (res.status === 'ok') {
-                    that.$button.removeClass('yellow');
+                    that.$button.removeClass('yellow').addClass('green');
                     that.$loading.removeClass('loading').addClass('yes');
                     that.$footer_actions.removeClass('is-changed');
 
@@ -489,7 +472,7 @@ class WASettingsSMSTemplate {
 
                         // Reload sidebar
                         $('#s-sms-templates-page .s-sms-template-sidebar-wrapper')
-                            .load('?module=settingsTemplateSMS&action=sidebar&id=' + res.data.channel.id, {'is_ui_update': true}, function () {
+                            .load('?module=settingsTemplateSMS&action=sidebar&id=' + res.data.channel.id, function () {
                                 // Update header, but after reload sidebar, cause we need UI updating looks like it does it at once, not alternately
                                 that.$wrapper.find('.s-template-name').text(res.data.channel.name);
                             });
@@ -519,9 +502,9 @@ class WASettingsSMSTemplate {
             });
         });
 
-        that.$form.on('input change', function () {
+        that.$form.on('input', function () {
             that.$footer_actions.addClass('is-changed');
-            that.$button.addClass('yellow');
+            that.$button.removeClass('green').addClass('yellow');
         });
 
         // Reload on cancel
@@ -699,12 +682,9 @@ class WASettingsSMSTemplate {
             };
 
             /**
-             * @deprecated
              * @param {Boolean|Object} set
              * */
             FixedBlock.prototype.fix2bottom = function (set) {
-                // disable
-                return;
                 var that = this,
                     fixed_class = "is-bottom-fixed";
 
@@ -754,7 +734,7 @@ class WASettingsSMSTemplate {
                 ace.setValue(that.default_templates[template_id]);
             });
 
-            that.$button.addClass('yellow');
+            that.$button.removeClass('green').addClass('yellow');
         });
 
     }
@@ -812,7 +792,7 @@ class WaSettingsSMSNewTemplateDialog {
 
             $.post(href, data, function (res) {
                 if (res.status === 'ok') {
-                    $button.removeClass('yellow');
+                    $button.removeClass('yellow').addClass('green');
                     setTimeout(function () {
                         $loading.hide();
                         $.wa.content.load(that.path_to_template + res.data.id + '/');
@@ -840,7 +820,7 @@ class WaSettingsSMSNewTemplateDialog {
             });
         });
         $form.on('input', function () {
-            $button.addClass('yellow');
+            $button.removeClass('green').addClass('yellow');
         });
     }
 

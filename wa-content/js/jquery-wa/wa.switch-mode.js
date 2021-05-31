@@ -14,13 +14,10 @@ new class ThemeMode {
 
     init() {
         const that = this;
-        const event = document.createEvent("Event");
 
         if (that.wa_theme_user_mode === 'dark') {
             // if user theme mode settings exist - enable that
             that.setTheme(that.wa_theme_user_mode, that.mediaQueryList)
-            event.initEvent("wa_theme_mode_dark", false, true);
-            document.dispatchEvent(event);
         }
 
         that.handleOrientationChange(that.mediaQueryList);
@@ -41,8 +38,6 @@ new class ThemeMode {
                 $dark_mode.addEventListener('click', function (e) {
                     e.preventDefault();
                     that.setTheme('dark', that.mediaQueryList)
-                    event.initEvent("wa_theme_mode_dark", false, true);
-                    document.dispatchEvent(event);
                 });
             }
 
@@ -50,8 +45,6 @@ new class ThemeMode {
                 $light_mode.addEventListener('click', function (e) {
                     e.preventDefault();
                     that.setTheme('light', that.mediaQueryList)
-                    event.initEvent("wa_theme_mode_light", false, true);
-                    document.dispatchEvent(event);
                 });
             }
 
@@ -59,8 +52,6 @@ new class ThemeMode {
                 $auto_mode.addEventListener('click', function (e) {
                     e.preventDefault();
                     that.setTheme('auto', that.mediaQueryList)
-                    event.initEvent("wa_theme_mode_auto", false, true);
-                    document.dispatchEvent(event);
                 });
             }
         });

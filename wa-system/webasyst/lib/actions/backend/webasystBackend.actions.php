@@ -84,7 +84,6 @@ class webasystBackendActions extends waViewActions
 
         $this->view->assign([
             'current_app'        => wa()->getApp(),
-            'today_users'        => $this->getTodayUsers(),
             'logo'               => (new webasystLogoSettings())->get(),
             'counts'             => wa()->getStorage()->read('apps-count'),
             'root_url'           => wa()->getRootUrl(),
@@ -200,11 +199,6 @@ class webasystBackendActions extends waViewActions
         }
 
         return $public_dashboards;
-    }
-
-    private function getTodayUsers()
-    {
-        return (new webasystTodayUsers())->getGroups();
     }
 
 }

@@ -190,21 +190,10 @@ class waContact implements ArrayAccess
             if ($retina) {
                 $size .= '@2x';
             }
-
-            $ui = wa()->whichUI();
-
             if ($type == 'company') {
-                if ($ui == '2.0') {
-                    return wa()->getRootUrl() . 'wa-content/img/company.svg';
-                } else {
-                    return wa()->getRootUrl() . 'wa-content/img/company' . $size . '.jpg';
-                }
+                return wa()->getRootUrl().'wa-content/img/company'.$size.'.jpg';
             } else {
-                if ($ui == '2.0') {
-                    return wa()->getRootUrl() . 'wa-content/img/userpic.svg';
-                } else {
-                    return wa()->getRootUrl() . 'wa-content/img/userpic' . $size . '.jpg';
-                }
+                return wa()->getRootUrl().'wa-content/img/userpic'.$size.'.jpg';
             }
         }
     }

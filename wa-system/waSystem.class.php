@@ -986,16 +986,13 @@ class waSystem
      * Normalize 'ui' option in app info array
      * @param array &$app_info
      * Variants:
-     *      '1.3' - app supports only '1.3' version of webasyst UI (default variant for not debug mode)
+     *      '1.3' - app supports only '1.3' version of webasyst UI
      *      '2.0' - app supports only '2.0' version of webasyst UI
-     *      '1.3,2.0' or '2.0,1.3' - app supports both versions of webasyst UI. Default variant in debug mode
+     *      '1.3,2.0' or '2.0,1.3' - app supports both versions of webasyst UI. Default variant
      */
     private function normalizeUIVersionOption(&$app_info)
     {
-        $default_ui_variant = '1.3';
-        // if (waSystemConfig::isDebug()) {
-            // $default_ui_variant = '1.3,2.0'; //enable when most apps are migrated
-        // }
+        $default_ui_variant = '1.3,2.0';
 
         // typecast
         if (!isset($app_info['ui']) || !is_string($app_info['ui'])) {

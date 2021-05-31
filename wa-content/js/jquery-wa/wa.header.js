@@ -13,7 +13,6 @@ class WaHeader {
         this.$applist = this.$wa_header.find('.js-applist-header');
         this.$applists = $('.js-applist');
         this.$notification_close = this.$notification_wrapper.find('.js-announcement-close');
-        this.header_apps_tooltips = $('.js-applist-header a[data-wa-tooltip-content]') || null;
         /// params
 
         // Fns Init
@@ -25,27 +24,11 @@ class WaHeader {
         this.appsToggle()
         this.searchPanel()
 
-        this.appsTooltip()
-
         // update counts immediately if there are no cached counts; otherwise, update later
         if (!this.$applist.is('.counts-cached')) {
             this.updateCount()
         } else {
             setInterval(this.updateCount, 60000);
-        }
-    }
-
-    /**
-     * @description Add tooltips for apps icons
-     */
-    appsTooltip() {
-        if (this.header_apps_tooltips) {
-            this.header_apps_tooltips.waTooltip({
-                arrow: false,
-                placement: "bottom",
-                theme: "bordered",
-                offset:[0, 3]
-            });
         }
     }
 
@@ -63,15 +46,12 @@ class WaHeader {
             $wa_header = document.querySelector('#wa-header'),
             $content = document.querySelector('.js-main-content')
 
-        const handler = () => {
-            let rect = $target.getBoundingClientRect(),
-                $target_height = rect.height,
-                $target_top = rect.top,
-                is_edit_mode = document.querySelector('body').classList.contains('is-custom-edit-mode');
+            const handler = (entries) => {
+                let entry = entries[0],
+                    {boundingClientRect, isIntersecting} = entry;
 
-            if (!is_edit_mode) {
                 if (target === '.wa-dashboard-page') {
-                    if ($target_top < 0 && (0 - $target_top) > $target_height) {
+                    if (isIntersecting) {
                         $content.classList.add('header-apps')
                     } else {
                         if (!$content.classList.contains('header-fixed')) {
@@ -79,44 +59,54 @@ class WaHeader {
                         }
                     }
                 } else {
-                    // элемент полностью не виден
-                    if ((0 - $target_top) > $target_height) {
-                        $wa_header.style.cssText = 'opacity:1';
-                        $content.classList.add('header-apps')
-                    }else{
-                        $wa_header.style.cssText = 'opacity:0';
+                    let target_height = boundingClientRect.height,
+                        target_offset = boundingClientRect.y,
+                        scroll_direction;
+
+                    // detect scroll direction
+                    if ((0 - target_height / 2) >= target_offset && isIntersecting) {
+                        scroll_direction = 'up'
+                    } else if ((0 - target_height / 2) <= target_offset && isIntersecting) {
+                        scroll_direction = 'down'
                     }
-                    // элемент полностью виден
-                    if ($target_top < $target_height && $target_top > 0) {
-                        $content.classList.remove('header-apps');
-                        $wa_header.style.cssText = 'opacity:1';
+
+                    if (scroll_direction === 'down') {
+                        $wa_header.style.cssText = 'transform: translateY(-4rem)';
+                    }
+
+                    if (target_offset < (0 - target_height)) {
+                        $wa_header.style.cssText = 'transform: translateY(0)';
+                        $content.classList.add('header-apps');
+                    }else if(target_offset > 0 && !isIntersecting){
+                        $wa_header.style.cssText = 'transform: translateY(0)';
+                    } else {
+                        new Promise((resolve) => {
+                            if (scroll_direction === 'up') {
+                                $wa_header.style.cssText = 'transform: translateY(-4rem)';
+                                setTimeout(() => resolve(), 10)
+                            }
+                        }).finally(() => {
+                            $wa_header.style.cssText = 'transform: translateY(0)';
+                            $content.classList.remove('header-apps');
+                        })
                     }
                 }
             }
-        }
-
-        addEventListener('load', handler, false);
-        addEventListener('scroll', handler, false);
-        addEventListener('resize', handler, false);
-
+            const observer = new IntersectionObserver(handler, settings);
+            observer.observe($target)
     }
 
     /**
      * @description Insert page title into header
-     * @param {Object} options
+     * @param {Object} $sidebar jQuery Object
+     * @param {Object} $wa_header jQuery Object
      */
-    static setHeaderTitle(options) {
-        let title_text = options.title_text || '',
-            place_after = options.place_after || '.wa-sitename',
-            truncate = options.truncate || false;
+    static setHeaderTitle($sidebar, $wa_header) {
+        let title = $sidebar.find('li.selected').data('header-title'),
+            header_title = $wa_header.find('.wa-header-sitename > span')
 
-        if (title_text) {
-            if (truncate && (title_text.length > truncate)) {
-                title_text= title_text.substring(0,truncate);
-            }
-
-            let $place_after = document.querySelector('#wa-header').querySelector(place_after);
-            $place_after.insertAdjacentHTML("afterEnd", `<span class="h2 wa-pagename">${title_text}</span>`);
+        if(title) {
+            header_title.text(title)
         }
     }
 
@@ -193,22 +183,10 @@ class WaHeader {
 
         const action = function ($toggler) {
             $toggler.toggleClass('down');
-            $toggler.toggleClass('wa-animation-spin');
-            setTimeout(() => $toggler.toggleClass('wa-animation-spin'), 1000);
+            $toggler.toggleClass('spin');
+            setTimeout(() => $toggler.toggleClass('spin'), 1000);
             that.$content.toggleClass('wa-nav-unfolded');
             that.$wa_nav .toggleClass('wa-nav-unfolded');
-
-            // Disable tooltip when apps panel is down
-            if ($toggler.hasClass('down')) {
-                that.header_apps_tooltips.each(function () {
-                    this._tippy.disable();
-                })
-            }else{
-                that.header_apps_tooltips.each(function () {
-                    this._tippy.enable();
-                })
-            }
-
         };
 
         $(document).keyup(function(e) {
@@ -232,26 +210,16 @@ class WaHeader {
      * @description Able to sort apps
      */
     sortableApps() {
-        let that = this,
-            is_mobile = that.$applists.hasClass('is-mobile'),
-            $app_list = that.$applists.find('ul');
-
+        let that = this;
         const app_list_sortable = () => {
-            const options = {
-                animation: 150,
-                dataIdAttr: 'data-app',
-                forceFallback: true,
-                onStart(event) {
-
-                },
-                onEnd(event) {
-                    /* хак для предотвращения срабатывания клика по элементу после его перетаскивания*/
-                    let $link = $(event.item).find('a'),
-                        href = $link.attr('href');
-                    $link.attr('href', 'javascript:void(0);');
-                    setTimeout(() => $link.attr('href', href),500)
-
-                    let data = this.toArray(),
+            that.$applists.find('ul').sortable({
+                distance: 5,
+                helper: 'clone',
+                items: 'li[id]',
+                opacity: 0.75,
+                tolerance: 'pointer',
+                stop: function () {
+                    let data = $(this).sortable("toArray", {attribute: 'data-app'}),
                         apps = [];
 
                     for (let i = 0; i < data.length; i++) {
@@ -264,22 +232,24 @@ class WaHeader {
                     let url = backend_url + "?module=settings&action=save";
                     $.post(url, {name: 'apps', value: apps});
                 }
-            };
-
-            if (is_mobile) {
-                options.delay = 100;
-                options.delayOnTouchOnly = true;
-            }
-
-            $app_list.sortable(options);
+            })
         }
 
-        if(typeof Sortable !== 'undefined') {
+        if ($.fn.sortable) {
             app_list_sortable()
         } else if (!$('#wa').hasClass('disable-sortable-header')) {
             let urls = [];
-            urls.push('wa-content/js/sortable/sortable.min.js');
-            urls.push('wa-content/js/sortable/jquery-sortable.min.js');
+            if (!$.browser) {
+                urls.push('wa-content/js/jquery/jquery-migrate-1.2.1.min.js');
+            }
+            if (!$.ui) {
+                urls.push('wa-content/js/jquery-ui/jquery.ui.core.min.js');
+                urls.push('wa-content/js/jquery-ui/jquery.ui.widget.min.js');
+                urls.push('wa-content/js/jquery-ui/jquery.ui.mouse.min.js');
+            } else if (!$.ui.mouse) {
+                urls.push('wa-content/js/jquery-ui/jquery.ui.mouse.min.js');
+            }
+            urls.push('wa-content/js/jquery-ui/jquery.ui.sortable.min.js');
 
             let $script = $("#wa-header-js"),
                 path = $script.attr('src').replace(/wa-content\/js\/jquery-wa\/wa.header.js.*$/, '');

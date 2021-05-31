@@ -22,7 +22,7 @@ return array(
     ),
     'rate'                => array(),
     'currency'            => array(
-        'value' => '',
+        'value' => 'USD',
     ),
     'weight_dimension'    => array(
         'value' => 'kg',

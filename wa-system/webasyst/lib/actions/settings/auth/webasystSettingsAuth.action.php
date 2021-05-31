@@ -17,10 +17,10 @@ class webasystSettingsAuthAction extends webasystSettingsViewAction
         // Backgrounds
         $backgrounds_path = wa()->getConfig()->getPath('content').'/img/backgrounds/thumbs';
         $backgrounds = $this->getImages($backgrounds_path);
-
         // Custom backgrounds
-        list($images_path, $images, $images_url) = $this->getCustomBackgroundImages();
-
+        $images_path = wa()->getDataPath(null, true, 'webasyst');
+        $images = $this->getImages($images_path);
+        $images_url = wa()->getDataUrl(null, true, 'webasyst');
         // Custom used background image
         $name = preg_replace('/\?.*$/', '', $settings['auth_form_background']);
         $path = wa()->getDataPath($name, true, 'webasyst');
@@ -98,25 +98,12 @@ class webasystSettingsAuthAction extends webasystSettingsViewAction
         return $cm->isBackendAuthForced();
     }
 
-    private function getCustomBackgroundImages()
-    {
-        $images_path = wa()->getDataPath(null, true, 'webasyst');
-        $images = $this->getImages($images_path, function($_, $file) {
-            return !webasystLogoSettings::isLogoFileName($file);
-        });
-        $images_url = wa()->getDataUrl(null, true, 'webasyst');
-        return [$images_path, $images, $images_url];
-    }
-
-    private function getImages($path, $filter = null)
+    private function getImages($path)
     {
         $files = waFiles::listdir($path);
-        foreach ($files as $idx => $file) {
+        foreach ($files as $id => $file) {
             if (!is_file($path.'/'.$file) || !preg_match('@\.(jpe?g|png|gif|bmp)$@', $file)) {
-                unset($files[$idx]);
-            }
-            if (is_callable($filter) && $filter($idx, $file) === false) {
-                unset($files[$idx]);
+                unset($files[$id]);
             }
         }
         return array_values($files);

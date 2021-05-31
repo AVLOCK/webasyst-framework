@@ -1,7 +1,7 @@
 <?php
 return array(
     'currency'     => array(
-        'value' => '',
+        'value' => 'USD',
     ),
     'payment_type' => array(
         'value' => array(),

@@ -11,6 +11,9 @@ var WASettingsMaps = ( function($) {
         that.$cancel = that.$footer_actions.find('.js-cancel');
         that.$loading = that.$footer_actions.find('.s-loading');
 
+        // VARS
+        that.wa2 = options['wa2'] || false;
+
         // DYNAMIC VARS
         that.is_locked = false;
 
@@ -22,8 +25,10 @@ var WASettingsMaps = ( function($) {
         var that = this;
 
         //
-        var $sidebar = $('#js-sidebar-wrapper');
-
+        var $sidebar = $('#s-sidebar-wrapper');
+        if (that.wa2) {
+            $sidebar = $('#js-sidebar-wrapper');
+        }
         $sidebar.find('ul li').removeClass('selected');
         $sidebar.find('[data-id="maps"]').addClass('selected');
         //
@@ -65,33 +70,54 @@ var WASettingsMaps = ( function($) {
             }
 
             that.$button.prop('disabled', true);
-
-            var $button_text = that.$button.text(),
-                $loader_icon = ' <i class="fas fa-spinner fa-spin"></i>',
-                $success_icon = ' <i class="fas fa-check-circle"></i>';
-            that.$button.empty().html($button_text + $loader_icon);
+            if (that.wa2) {
+                var $button_text = that.$button.text(),
+                    $loader_icon = ' <i class="fas fa-spinner fa-spin"></i>',
+                    $success_icon = ' <i class="fas fa-check-circle"></i>';
+                that.$button.empty().html($button_text + $loader_icon);
+            } else {
+                that.$loading.removeClass('yes').addClass('loading').show();
+            }
 
             var href = that.$form.attr('action'),
                 data = that.$form.serialize();
 
             $.post(href, data, function (res) {
                 if (res.status === 'ok') {
-                    that.$button.empty().html($button_text + $success_icon).removeClass('yellow');
-                    that.$footer_actions.removeClass('is-changed');
+                    if (that.wa2) {
+                        that.$button.empty().html($button_text + $success_icon).removeClass('yellow');
+                        that.$footer_actions.removeClass('is-changed');
+                    }else{
+                        that.$button.removeClass('yellow').addClass('green');
+                        that.$loading.removeClass('loading').addClass('yes');
+                        that.$footer_actions.removeClass('is-changed');
+                    }
                     setTimeout(function(){
-                        that.$button.empty().html($button_text);
+                        if (that.wa2) {
+                            that.$button.empty().html($button_text);
+                        }else{
+                            that.$loading.hide();
+                        }
                     },2000);
                 } else {
-                    that.$button.empty().html($button_text);
+                    if (that.wa2) {
+                        that.$button.empty().html($button_text);
+                    }else{
+                        that.$loading.hide();
+                    }
                 }
                 that.is_locked = false;
                 that.$button.prop('disabled', false);
             });
         });
 
-        that.$form.on('input change', function () {
+        that.$form.on('input', function () {
             that.$footer_actions.addClass('is-changed');
-            that.$button.addClass('yellow').next().show();
+            if (that.wa2) {
+                that.$button.addClass('yellow').next().show();
+            }else{
+                that.$button.removeClass('green').addClass('yellow');
+            }
         });
 
         // Reload on cancel

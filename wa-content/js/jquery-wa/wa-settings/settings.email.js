@@ -208,6 +208,9 @@ class WASettingsEmail {
         that.transport_class = ".js-transport";
         that.dkim_checkbox_class = ".js-dkim-checkbox";
 
+        // VARS
+        that.wa2 = options['wa2'] || false;
+
         // DYNAMIC VARS
         that.is_locked = false;
 
@@ -392,7 +395,7 @@ class WASettingsEmail {
 
             $.post(href, data, function (res) {
                 if (res.status === 'ok') {
-                    that.$button.removeClass('yellow');
+                    that.$button.removeClass('yellow').addClass('green');
                     that.$loading.removeClass('loading').addClass('yes');
                     that.$footer_actions.removeClass('is-changed');
                     setTimeout(function(){
@@ -439,9 +442,9 @@ class WASettingsEmail {
             }, 1000);
         }
 
-        that.$form.on('input change', function () {
+        that.$form.on('input', function () {
             that.$footer_actions.addClass('is-changed');
-            that.$button.addClass('yellow');
+            that.$button.removeClass('green').addClass('yellow');
         });
 
         // Reload on cancel
@@ -472,6 +475,7 @@ class WASettingsEmailTemplate {
         that.cheat_sheet_name = options["cheat_sheet_name"];
         that.default_template = options["default_template"];
         that.template_id = options.template_id || '';
+        that.wa2 = options['wa2'] || false;
 
         // DYNAMIC VARS
         that.is_locked = false;
@@ -517,27 +521,7 @@ class WASettingsEmailTemplate {
         // Set options
         that.ace.commands.removeCommand('find');
         ace.config.set("basePath", window.wa_url + 'wa-content/js/ace/');
-
-        let $them_mode = document.querySelector('#wa-dark-mode').getAttribute('media');
-        if ($them_mode === '(prefers-color-scheme: dark)') {
-            that.ace.setTheme("ace/theme/eclipse");
-        }else{
-            that.ace.setTheme("ace/theme/monokai");
-        }
-        document.addEventListener('wa_theme_mode_dark', function() {
-            that.ace.setTheme("ace/theme/monokai");
-        })
-        document.addEventListener('wa_theme_mode_light', function() {
-            that.ace.setTheme("ace/theme/eclipse");
-        })
-        document.addEventListener('wa_theme_mode_auto', function() {
-            if ($them_mode === '(prefers-color-scheme: dark)') {
-                that.ace.setTheme("ace/theme/eclipse");
-            }else{
-                that.ace.setTheme("ace/theme/monokai");
-            }
-        })
-
+        that.ace.setTheme("ace/theme/eclipse");
         that.ace.renderer.setShowGutter(false);
         let session = that.ace.getSession();
         session.setMode("ace/mode/smarty");
@@ -553,7 +537,7 @@ class WASettingsEmailTemplate {
         } else {
             session.setValue(' ');
         }
-        that.ace.setOption("minLines", 10);
+        that.ace.setOption("minLines", 5);
         that.ace.setOption("maxLines", 100);
         session.on('change', function () {
             that.$template_text.val(that.ace.getValue());
@@ -568,12 +552,16 @@ class WASettingsEmailTemplate {
             return ($(window).width() - (that.$wrapper.offset().left + that.$wrapper.outerWidth()));
         };
 
-        $(document).on('wa_cheatsheet_init.' + cheat_sheet_name, function () {
+        $(document).bind('wa_cheatsheet_init.' + cheat_sheet_name, function () {
             $.cheatsheet[cheat_sheet_name].insertVarEvent = function () {
-                $("#wa-editor-help-" + cheat_sheet_name).on('click', ".js-var", function () {
+                $("#wa-editor-help-" + cheat_sheet_name).on('click', "div.fields a.inline-link", function () {
+                    let el = $(this).find('i');
+                    if (el.children('b').length) {
+                        el = el.children('b');
+                    }
                     if (that.ace) {
-                        that.ace.insert($(this).text());
-                        that.$button.addClass('yellow');
+                        that.ace.insert(el.text());
+                        that.$button.removeClass('green').addClass('yellow');
                     }
                     $("#wa-editor-help-" + cheat_sheet_name).hide();
                     return false;
@@ -676,7 +664,7 @@ class WASettingsEmailTemplate {
 
                             $.post(href, data, function (res) {
                                 if (res.status === 'ok') {
-                                    $button.removeClass('yellow');
+                                    $button.removeClass('yellow').addClass('green');
                                     setTimeout(function(){
                                         $loading.hide();
                                         dialog.close();
@@ -725,7 +713,7 @@ class WASettingsEmailTemplate {
 
             $.post(href, data, function (res) {
                 if (res.status === 'ok') {
-                    that.$button.removeClass('yellow');
+                    that.$button.removeClass('yellow').addClass('green');
                     that.$loading.removeClass('loading').addClass('yes');
                     that.$footer_actions.removeClass('is-changed');
                     setTimeout(function(){
@@ -739,9 +727,9 @@ class WASettingsEmailTemplate {
             });
         });
 
-        that.$form.on('input change', function () {
+        that.$form.on('input', function () {
             that.$footer_actions.addClass('is-changed');
-            that.$button.addClass('yellow');
+            that.$button.removeClass('green').addClass('yellow');
         });
 
         // Reload on cancel
@@ -773,7 +761,7 @@ class WASettingsEmailTemplate {
         $link.on('click', function () {
             $subject.val(subject);
             ace.setValue(that.default_template["text"]);
-            that.$button.addClass('yellow');
+            that.$button.removeClass('green').addClass('yellow');
         });
     }
 }
@@ -910,7 +898,7 @@ class WASettingsEmailTemplateSidebar {
 
                         $.post(href, data, function (res) {
                             if (res.status === 'ok') {
-                                $button.removeClass('yellow');
+                                $button.removeClass('yellow').addClass('green');
                                 setTimeout(function () {
                                     $loading.hide();
                                     $.wa.content.load(that.path_to_template + res.data.id + '/');
@@ -937,7 +925,7 @@ class WASettingsEmailTemplateSidebar {
                         });
                     })
                         .on('input', function () {
-                            $button.addClass('yellow');
+                            $button.removeClass('green').addClass('yellow');
                         });
                 }
             });
@@ -989,7 +977,7 @@ class WASettingsEmailTemplateSidebar {
 
                         $.post(href, data, function (res) {
                             if (res.status === 'ok') {
-                                $button.removeClass('yellow');
+                                $button.removeClass('yellow').addClass('green');
                                 setTimeout(function(){
                                     $loading.hide();
                                     $.wa.content.reload();
@@ -1016,7 +1004,7 @@ class WASettingsEmailTemplateSidebar {
                         });
                     })
                         .on('input', function () {
-                        $button.addClass('yellow');
+                        $button.removeClass('green').addClass('yellow');
                     });
 
                     // Duplicate and Delete channel

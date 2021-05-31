@@ -54,7 +54,7 @@ return array(
     'city'         => array(
         'value'        => 'Москва',
         'title'        => 'Город магазина',
-        'description'  => 'Введите название ближайшего крупного города',
+        'description'  => '',
         'control_type' => waHtmlControl::INPUT,
     ),
     'size'         => array(

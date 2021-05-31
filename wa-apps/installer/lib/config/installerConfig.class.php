@@ -321,7 +321,7 @@ class installerConfig extends waAppConfig
                 $params[] = array(
                     'app_id' => 'installer',
                     'name'   => $key,
-                    'value'  => is_array($ads[$key]) ? json_encode($ads[$key]) : $ads[$key],
+                    'value'  => $ads[$key],
                 );
             }
             $wasm->multipleInsert($params);

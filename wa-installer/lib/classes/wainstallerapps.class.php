@@ -2388,7 +2388,7 @@ class waInstallerApps
     public function getInstallerAnnounceUrl()
     {
         try {
-            return $this->buildUpdatesUrl('3.0', self::VENDOR_SELF, 'installer/announce/2');
+            return $this->buildUpdatesUrl('3.0', self::VENDOR_SELF, 'installer/announce');
         } catch (Exception $e) {
             throw new Exception('Unable to build URL to get announcements');
         }
